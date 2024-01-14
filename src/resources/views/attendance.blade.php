@@ -5,5 +5,7 @@
 @endsection
 
 @section('content')
-
+<div class="atte__content">
+    aaa
+</div>
 @endsection

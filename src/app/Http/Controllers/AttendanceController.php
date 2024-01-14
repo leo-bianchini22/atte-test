@@ -10,4 +10,9 @@ class AttendanceController extends Controller
     {
         return view('index');
     }
+
+    public function attendance()
+    {
+        return view('attendance');
+    }
 }

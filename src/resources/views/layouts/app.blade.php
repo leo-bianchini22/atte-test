@@ -20,16 +20,14 @@
                 </a>
             </div>
             <nav class="header__nav">
-                @if (Auth::check())
                 <ul>
                     <li>ホーム</li>
-                    <li>日付一覧</li>
+                    <li><a href="/attendance">日付一覧</a></li>
                     <form class="logout__form" action="/logout" method="post">
                         @csrf
                         <button>ログアウト</button>
                     </form>
                 </ul>
-                @endif
             </nav>
         </div>
     </header>
