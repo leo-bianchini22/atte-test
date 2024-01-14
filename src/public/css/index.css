@@ -1,12 +1,12 @@
 .atte__content {
     margin: 0 auto;
-    height: 801.33px;
+    padding: 30px;
+    background-color: #fafafa;
 }
 
 .atte__inner {
     width: 100%;
     padding: 0 15px 50px;
-    background-color: #fafafa;
 }
 
 .atte__hello {
@@ -29,9 +29,4 @@
     padding: 100px 200px;
     font-size: 18px;
     font-weight: bold;
-}
-
-.atte__bottom {
-    text-align: center;
-    margin: 10px;
 }

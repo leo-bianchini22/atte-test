@@ -21,12 +21,14 @@
             </div>
             <nav class="header__nav">
                 <ul>
+                    @if (Auth::check())
                     <li>ホーム</li>
                     <li><a href="/attendance">日付一覧</a></li>
                     <form class="logout__form" action="/logout" method="post">
                         @csrf
                         <button>ログアウト</button>
                     </form>
+                    @endif
                 </ul>
             </nav>
         </div>
@@ -35,6 +37,10 @@
     <main>
         @yield('content')
     </main>
+
+    <div class="atte__bottom">
+        <small>Atte,inc.</small>
+    </div>
 </body>
 
 </html>

@@ -21,8 +21,5 @@
             </div>
         </div>
     </div>
-    <div class="atte__bottom">
-        <small>Atte,inc.</small>
-    </div>
 </div>
 @endsection
