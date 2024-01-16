@@ -20,4 +20,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
     Route::get('/', [AuthController::class, 'index']);
 });
-Route::get('/attendance', [AttendanceController::class, 'attendance']);
+Route::middleware('auth')->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'attendance']);
+});
+
+//出退勤打刻
+Route::post('/time/timein', [AttendanceController::class, 'timein']);
+Route::post('/time/timeout', [AttendanceController::class, 'timeout']);
+//休憩打刻
+Route::post('/time/breakin', [AttendanceController::class, 'breakin']);
+Route::post('/time/breakout', [AttendanceController::class, 'breakout']);

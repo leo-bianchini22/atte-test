@@ -8,16 +8,30 @@
 <div class="atte__content">
     <div class="atte__inner">
         <div class="atte__hello">
-            <p>さんお疲れ様です！</p>
+            @foreach($times as $time)
+            <p>{{ $time->user->name }}さんお疲れ様です！</p>
+            @endforeach
         </div>
         <div class="atte__button">
             <div class="atte__button-row">
-                <button class="atte-start__button">勤務開始</button>
-                <button class="atte-stop__button">勤務終了</button>
+                <form action="/time/timein" method="post">
+                    @csrf
+                    <button name="work_start" class="atte-start__button">勤務開始</button>
+                </form>
+                <form action="/time/timeout" method="post">
+                    @csrf
+                    <button name="work_end" class="atte-stop__button">勤務終了</button>
+                </form>
             </div>
             <div class="atte__button-row">
-                <button class="rest-start__button">休憩開始</button>
-                <button class="rest-stop__button">休憩終了</button>
+                <form action="/time/breakin" method="post">
+                    @csrf
+                    <button name="rest_start" class="rest-start__button">休憩開始</button>
+                </form>
+                <form action="/time/breakout" method="post">
+                    @csrf
+                    <button name="rest_end" class="rest-stop__button">休憩終了</button>
+                </form>
             </div>
         </div>
     </div>

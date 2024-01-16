@@ -1,0 +1,30 @@
+.atte__content {
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #fafafa;
+    text-align: center;
+}
+
+.paginate__header {
+    padding: 30px 0;
+    text-align: center;
+}
+
+.atte-table__inner {
+    width: 100%;
+}
+
+.atte-table {
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+}
+
+.atte-table__row__ttl, .atte-table__row {
+    border-top: 1px solid gray;
+}
+
+.atte-table__row__ttl td, .atte-table__row td {
+    padding: 30px 0;
+}
+

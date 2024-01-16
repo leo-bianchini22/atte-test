@@ -22,7 +22,7 @@
             <nav class="header__nav">
                 <ul>
                     @if (Auth::check())
-                    <li>ホーム</li>
+                    <li><a href="/">ホーム</a></li>
                     <li><a href="/attendance">日付一覧</a></li>
                     <form class="logout__form" action="/logout" method="post">
                         @csrf
