@@ -13,14 +13,27 @@ class AttendanceController extends Controller
 {
     public function attendance(Request $request)
     {
-        $today = Carbon::today();
-        $month = intval($today->month);
-        $day = intval($today->day);
+        // $today = Carbon::today();
+        // $month = intval($today->month);
+        // $day = intval($today->day);
         //当日の勤怠を取得
-        $times = Time::GetMonthAttendance($month)->GetDayAttendance($day)->get();
+        // $times = Time::GetMonthAttendance($month)->GetDayAttendance($day)->Paginate(5);
+
+        //日付のみ表示
+        // $today = date_format($today, 'Y-m-d');
+
+        $times = Time::Paginate(5);
         $users = User::all();
 
-        return view('attendance', compact('times', 'users'));
+        return view('attendance', compact('times', 'users',));
+    }
+
+    public function search(Request $request)
+    {
+        $times = Time::with('user')->CreatedSearch($request->created_at)->Paginate(5);
+        $users = User::all();
+
+        return view('attendance', compact('times', 'users',));
     }
 
     //出勤アクション
@@ -40,9 +53,9 @@ class AttendanceController extends Controller
         }
         $today = Carbon::today(); //当日の日時を00:00:00で代入
 
-        // if (($oldDay == $today) && (empty($oldtimein->punchOut))) {
-        //     return redirect()->back()->with('message', '出勤打刻済みです');
-        // }
+        if (($oldDay == $today) && (empty($oldtimein->punchOut))) {
+            return redirect()->back()->with('message', '出勤打刻済みです');
+        }
 
         // 退勤後に再度出勤を押せない制御
         if ($oldtimein) {

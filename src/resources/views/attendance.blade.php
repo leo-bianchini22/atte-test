@@ -6,7 +6,13 @@
 
 @section('content')
 <div class="atte__content">
-    <div class="paginate__header">ページネーション</div>
+    <form class="search__form" action="/attendance/search" method="get">
+        @csrf
+        <!-- <button class="search__button-left">&lt;</button>
+        <div class="search-form__date"></div>
+        <button class="search__button-right">&gt;</button> -->
+        <input type="date" class="search-form__date" name="created_at"><button class="search__button-right">&gt;</button>
+    </form>
     <div class="atte-table">
         <table class="atte-table__inner">
             <tr class="atte-table__row__ttl">
@@ -19,14 +25,14 @@
             @foreach($times as $time)
             <tr class="atte-table__row">
                 <td>{{ $time->user->name }}</td>
-                <td>{{ $time->punchIn }}</td>
-                <td>{{ $time->punchOut }}</td>
+                <td>{{ date('H:i:s', strtotime($time->punchIn)) }}</td>
+                <td>{{ date('H:i:s', strtotime($time->punchOut)) }}</td>
                 <td>{{ $time->breakTime }}</td>
                 <td>{{ $time->workTime }}</td>
             </tr>
             @endforeach
         </table>
     </div>
-    <div class="paginate__bottom">ページネーション</div>
+    <div class="paginate">{{ $times->render('pagination::bootstrap-4') }}</div>
 </div>
 @endsection

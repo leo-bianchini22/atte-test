@@ -8,9 +8,7 @@
 <div class="atte__content">
     <div class="atte__inner">
         <div class="atte__hello">
-            @foreach($times as $time)
-            <p>{{ $time->user->name }}さんお疲れ様です！</p>
-            @endforeach
+            <p>{{ Auth::user()->name }}さんお疲れ様です！</p>
         </div>
         <div class="atte__button">
             <div class="atte__button-row">
@@ -33,6 +31,11 @@
                     <button name="rest_end" class="rest-stop__button">休憩終了</button>
                 </form>
             </div>
+        </div>
+        <div class="error">
+            @error('button')
+            {{ $message }}
+            @enderror
         </div>
     </div>
 </div>

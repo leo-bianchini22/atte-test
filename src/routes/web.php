@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'attendance']);
 });
+Route::get('/attendance/search', [AttendanceController::class, 'search']);
 
 //出退勤打刻
 Route::post('/time/timein', [AttendanceController::class, 'timein']);
