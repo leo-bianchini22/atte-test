@@ -37,14 +37,22 @@ class AttendanceController extends Controller
     }
 
     //出勤アクション
-    public function timein()
+    public function timein(Request $request)
     {
         // **必要なルール**
         // ・同じ日に2回出勤が押せない(もし打刻されていたらhomeに戻る設定)
         $user = Auth::user();
         $oldtimein = Time::where('user_id', $user->id)->latest()->first(); //一番最新のレコードを取得
 
-        // $oldDay = '';
+        // 出勤後にボタンが押せなくなる制御
+        $work_clicked = $request->input('work_clicked');
+        if ($work_clicked == 'work_start') {
+            $work_clicked = false;
+            return redirect()->route('index')->with(compact('work_clicked'));
+        } elseif ($work_clicked == 'work_end') {
+            $work_clicked = true;
+            return redirect()->route('index')->with(compact('work_clicked'));
+        }
 
         //退勤前に出勤を2度押せない制御
         if ($oldtimein) {

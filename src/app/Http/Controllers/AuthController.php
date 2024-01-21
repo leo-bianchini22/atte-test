@@ -8,11 +8,13 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $times = Time::all();
         $users = User::all();
 
-        return view('index', compact('times', 'users'));
+        $work_clicked = $request->input('work_clicked');
+
+        return view('index', compact('times', 'users', 'work_clicked'));
     }
 }
