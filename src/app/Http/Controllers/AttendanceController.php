@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Stmt\Break_;
 
 class AttendanceController extends Controller
 {
@@ -44,26 +45,16 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $oldtimein = Time::where('user_id', $user->id)->latest()->first(); //一番最新のレコードを取得
 
-        // 出勤後にボタンが押せなくなる制御
-        $work_clicked = $request->input('work_clicked');
-        if ($work_clicked == 'work_start') {
-            $work_clicked = false;
-            return redirect()->route('index')->with(compact('work_clicked'));
-        } elseif ($work_clicked == 'work_end') {
-            $work_clicked = true;
-            return redirect()->route('index')->with(compact('work_clicked'));
-        }
-
         //退勤前に出勤を2度押せない制御
-        if ($oldtimein) {
-            $oldTimePunchIn = new Carbon($oldtimein->punchIn);
-            $oldDay = $oldTimePunchIn->startOfDay(); //最後に登録したpunchInの時刻を00:00:00で代入
-        }
+        // if ($oldtimein) {
+        //     $oldTimePunchIn = new Carbon($oldtimein->punchIn);
+        //     $oldDay = $oldTimePunchIn->startOfDay(); //最後に登録したpunchInの時刻を00:00:00で代入
+        // }
         $today = Carbon::today(); //当日の日時を00:00:00で代入
 
-        if (($oldDay == $today) && (empty($oldtimein->punchOut))) {
-            return redirect()->back()->with('message', '出勤打刻済みです');
-        }
+        // if (($oldDay == $today) && (empty($oldtimein->punchOut))) {
+        //     return redirect()->back()->with('message', '出勤打刻済みです');
+        // }
 
         // 退勤後に再度出勤を押せない制御
         if ($oldtimein) {
@@ -88,11 +79,20 @@ class AttendanceController extends Controller
             'year' => $year,
         ]);
 
-        return redirect()->back();
+        // 出勤後に勤務開始ボタンが押せなくなる制御
+        $work_clicked = $request->input('work_clicked');
+        if ($work_clicked == 'work_start') {
+            $work_clicked = true;
+        } elseif ($work_clicked == 'work_end') {
+            $work_clicked = false;
+        }
+        // dump($work_clicked);
+
+        return redirect()->route('index')->with('key', $work_clicked);
     }
 
     //退勤アクション
-    public function timeOut()
+    public function timeOut(Request $request)
     {
         //ログインユーザーの最新のレコードを取得
         $user = Auth::user();
@@ -141,25 +141,38 @@ class AttendanceController extends Controller
             return redirect()->back();
             // ->with('message', '出勤打刻がされていません');
         }
+
+        $work_clicked = $request->input('work_clicked');
+        if ($work_clicked == 'work_start') {
+            $work_clicked = true;
+        } elseif ($work_clicked == 'work_end') {
+            $work_clicked = false;
+        }
+        return redirect()->route('index')->with('key', $work_clicked);
     }
 
     //休憩開始アクション
-    public function breakIn()
+    public function breakIn(Request $request)
     {
-        $user = Auth::user();
-        $oldtimein = Time::where('user_id', $user->id)->latest()->first();
+        $user = Time::all();
+        $oldtimein = Rest::where('time_id', $user->time_id)->latest()->first();
+        // $user = Auth::user();
+        // $oldtimein = Time::where('user_id', $user->id)->latest()->first();
 
         if ($oldtimein->punchIn && !$oldtimein->punchOut && !$oldtimein->breakIn) {
             $oldtimein->update([
+                'time_id' => $user->time_id,
                 'breakIn' => Carbon::now(),
             ]);
             return redirect()->back();
         }
-        return redirect()->back();
+
+        $work_clicked = true;
+        return redirect()->route('index')->with('key', $work_clicked);
     }
 
     //休憩終了アクション
-    public function breakOut()
+    public function breakOut(Request $request)
     {
         $user = Auth::user();
         $oldtimein = Time::where('user_id', $user->id)->latest()->first();

@@ -18,10 +18,7 @@ class CreateTimesTable extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->dateTime('punchIn');
             $table->dateTime('punchOut')->nullable();
-            $table->dateTime('breakIn')->nullable();
-            $table->dateTime('breakOut')->nullable();
             $table->float('workTime')->nullable();
-            $table->float('breakTime')->nullable();
             $table->integer('month');
             $table->integer('day');
             $table->timestamps();
