@@ -16,6 +16,11 @@ class Time extends Model
         return $this->belongsTo(User::class);
     }
 
+        public function rest()
+    {
+        return $this->hasMany(Rest::class);
+    }
+
     public function scopeCreatedSearch($query, $created_at)
     {
         if (!empty($created_at)) {

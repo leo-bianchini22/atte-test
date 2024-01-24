@@ -24,9 +24,10 @@ class AttendanceController extends Controller
         // $today = date_format($today, 'Y-m-d');
 
         $times = Time::Paginate(5);
+        $rests = Rest::all();
         $users = User::all();
 
-        return view('attendance', compact('times', 'users',));
+        return view('attendance', compact('times', 'users', 'rests'));
     }
 
     public function search(Request $request)
@@ -154,18 +155,37 @@ class AttendanceController extends Controller
     //休憩開始アクション
     public function breakIn(Request $request)
     {
-        $user = Time::all();
-        $oldtimein = Rest::where('time_id', $user->time_id)->latest()->first();
+        $user = Auth::user();
+        $timeOut = Rest::where('time_id', $user->time_id)->latest()->first();
+        $oldtimein = Time::where('user_id', $user->id)->latest()->first();
         // $user = Auth::user();
         // $oldtimein = Time::where('user_id', $user->id)->latest()->first();
 
-        if ($oldtimein->punchIn && !$oldtimein->punchOut && !$oldtimein->breakIn) {
-            $oldtimein->update([
-                'time_id' => $user->time_id,
-                'breakIn' => Carbon::now(),
-            ]);
-            return redirect()->back();
-        }
+        // $punchIn = new Carbon($timeOut->punchIn);
+        // $breakIn = new Carbon($timeOut->breakIn);
+        // $breakOut = new Carbon($timeOut->breakOut);
+
+        // if ($timeOut->punchIn && !$timeOut->punchOut && !$oldtimein->breakIn) {
+        //     $oldtimein->update([
+        //         'time_id' => $user->time_id,
+        //         'breakIn' => Carbon::now(),
+        //     ]);
+        //     return redirect()->back();
+        // }
+
+        $today = Carbon::today();
+
+        $month = intval($today->month);
+        $day = intval($today->day);
+        $year = intval($today->year);
+
+        $rest = Rest::create([
+            'time_id' => $user->id,
+            'breakIn' => Carbon::now(),
+            'month' => $month,
+            'day' => $day,
+            'year' => $year,
+        ]);
 
         $work_clicked = true;
         return redirect()->route('index')->with('key', $work_clicked);
@@ -175,28 +195,40 @@ class AttendanceController extends Controller
     public function breakOut(Request $request)
     {
         $user = Auth::user();
+        $timeOut = Rest::where('time_id', $user->id)->latest()->first();
         $oldtimein = Time::where('user_id', $user->id)->latest()->first();
 
         //string → datetime型
         $now = new Carbon();
-        $punchIn = new Carbon($oldtimein->punchIn);
-        $punchOut = new Carbon($oldtimein->punchOut);
-        $breakIn = new Carbon($oldtimein->breakIn);
+        // $punchIn = new Carbon($oldtimein->punchIn);
+        // $punchOut = new Carbon($oldtimein->punchOut);
+        $breakIn = new Carbon($timeOut->breakIn);
         //休憩時間(Minute)
-        $stayTime = $punchIn->diffInMinutes($punchOut);
+        // $stayTime = $punchIn->diffInMinutes($punchOut);
         $breakTime = $breakIn->diffInMinutes($now);
-        $breakingMinute = $breakTime + 0;
+        $breakingMinute = $breakTime;
         //5分刻み
-        $breakingHour = ceil($breakingMinute / 5) * 5;
+        $breakingTime = ceil($breakingMinute / 5) * 5;
 
-        if ($oldtimein->breakIn && !$oldtimein->breakOut) {
-            $oldtimein->update([
+        // 休憩時間トータル
+        // $totalRestTime = Carbon::parse('00:00:00');
+
+        // foreach($timeOut as $timeOut) {
+        //     $now = new Carbon();
+        //     $breakIn = new Carbon($timeOut->breakIn);
+
+        //     $breakingTime = $now->diff($breakIn);
+        // }
+
+        if ($timeOut->breakIn && !$timeOut->breakOut) {
+            $timeOut->update([
                 'breakOut' => Carbon::now(),
-                'breakTime' => $breakingHour
+                'breakTime' => $breakingTime
             ]);
-            return redirect()->back();
         }
-        return redirect()->back();
+
+        $work_clicked = true;
+        return redirect()->route('index')->with('key', $work_clicked);
     }
 
     // //勤怠実績
