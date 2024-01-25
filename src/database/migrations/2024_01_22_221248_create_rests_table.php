@@ -18,7 +18,7 @@ class CreateRestsTable extends Migration
             $table->foreignId('time_id')->constrained()->cascadeOnDelete();
             $table->dateTime('breakIn')->nullable();
             $table->dateTime('breakOut')->nullable();
-            $table->float('breakTime')->nullable();
+            $table->dateTime('breakTime')->nullable();
             $table->integer('month');
             $table->integer('day');
             $table->timestamps();

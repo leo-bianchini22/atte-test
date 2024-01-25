@@ -198,19 +198,49 @@ class AttendanceController extends Controller
         $timeOut = Rest::where('time_id', $user->id)->latest()->first();
         $oldtimein = Time::where('user_id', $user->id)->latest()->first();
 
-        //string → datetime型
-        $now = new Carbon();
-        // $punchIn = new Carbon($oldtimein->punchIn);
-        // $punchOut = new Carbon($oldtimein->punchOut);
-        $breakIn = new Carbon($timeOut->breakIn);
-        //休憩時間(Minute)
-        // $stayTime = $punchIn->diffInMinutes($punchOut);
-        $breakTime = $breakIn->diffInMinutes($now);
-        $breakingMinute = $breakTime;
-        //5分刻み
-        $breakingTime = ceil($breakingMinute / 5) * 5;
+        // //string → datetime型
+        // $now = new Carbon();
+        // // $punchIn = new Carbon($oldtimein->punchIn);
+        // // $punchOut = new Carbon($oldtimein->punchOut);
+        // $breakIn = new Carbon($timeOut->breakIn);
+        // //休憩時間(Minute)
+        // // $stayTime = $punchIn->diffInMinutes($punchOut);
+        // $breakTime = $breakIn->diffInMinutes($now);
+        // $breakingMinute = $breakTime;
+        // //5分刻み
+        // $breakingTime = ceil($breakingMinute / 5) * 5;
+
+        if ($timeOut->breakIn && !$timeOut->breakOut) {
+            $timeOut->update([
+                'breakOut' => Carbon::now(),
+            ]);
+        }
 
         // 休憩時間トータル
+        $today = Carbon::today();
+        $month = intval($today->month);
+        $day = intval($today->day);
+        $rests = Rest::GetMonthAttendance($month)->GetDayAttendance($day)->get();
+        foreach ($rests as $rest) {
+            // 取得
+            $breakInString = Rest::select('breakIn')->get();
+            $breakOutString = Rest::select('breakOut')->get();
+             //string → datetime型
+            $breakIn = new Carbon($rest->breakIn);
+            $breakOut = new Carbon($rest->breakOut);
+
+            $breakingTime = Carbon::parse('00:00:00');
+
+            $breakingTimeHours = $breakIn->diffInHours($breakOut);
+            $breakingTimeMinutes = $breakIn->diffInMinutes($breakOut);
+            $breakingTimeSeconds = $breakIn->diffInSeconds($breakOut);
+            $totalBreakingTime = $breakingTime->add($breakingTimeHours, $breakingTimeMinutes, $breakingTimeSeconds);
+        }
+
+        $timeOut->update([
+            'breakTime' => Carbon::create($totalBreakingTime)
+        ]);
+
         // $totalRestTime = Carbon::parse('00:00:00');
 
         // foreach($timeOut as $timeOut) {
@@ -219,13 +249,6 @@ class AttendanceController extends Controller
 
         //     $breakingTime = $now->diff($breakIn);
         // }
-
-        if ($timeOut->breakIn && !$timeOut->breakOut) {
-            $timeOut->update([
-                'breakOut' => Carbon::now(),
-                'breakTime' => $breakingTime
-            ]);
-        }
 
         $work_clicked = true;
         return redirect()->route('index')->with('key', $work_clicked);

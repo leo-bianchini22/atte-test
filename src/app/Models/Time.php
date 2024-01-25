@@ -18,7 +18,7 @@ class Time extends Model
 
         public function rest()
     {
-        return $this->hasOne(Rest::class);
+        return $this->hasMany(Rest::class);
     }
 
     public function scopeCreatedSearch($query, $created_at)
@@ -28,15 +28,15 @@ class Time extends Model
         }
     }
 
-    // //任意の月の勤怠をスコープ
-    // public function scopeGetMonthAttendance($query, $month)
-    // {
-    //     return $query->where('month', $month);
-    // }
+    //任意の月の勤怠をスコープ
+    public function scopeGetMonthAttendance($query, $month)
+    {
+        return $query->where('month', $month);
+    }
 
-    // //任意の月の勤怠をスコープ
-    // public function scopeGetDayAttendance($query, $day)
-    // {
-    //     return $query->where('day', $day);
-    // }
+    //任意の月の勤怠をスコープ
+    public function scopeGetDayAttendance($query, $day)
+    {
+        return $query->where('day', $day);
+    }
 }

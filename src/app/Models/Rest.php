@@ -16,4 +16,16 @@ class Rest extends Model
     {
         return $this->belongsTo(Time::class);
     }
+
+    //任意の月の勤怠をスコープ
+    public function scopeGetMonthAttendance($query, $month)
+    {
+        return $query->where('month', $month);
+    }
+
+    //任意の月の勤怠をスコープ
+    public function scopeGetDayAttendance($query, $day)
+    {
+        return $query->where('day', $day);
+    }
 }
