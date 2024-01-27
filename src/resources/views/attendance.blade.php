@@ -27,7 +27,7 @@
                 <td>{{ $time->user->name }}</td>
                 <td>{{ date('H:i:s', strtotime($time->punchIn)) }}</td>
                 <td>{{ date('H:i:s', strtotime($time->punchOut)) }}</td>
-                <td>{{ $time->rest->breakTime }}</td>
+                <td>{{ date('H:i:s', strtotime($time->rest->breakTime)) }}</td>
                 <td>{{ $time->workTime }}</td>
             </tr>
             @endforeach

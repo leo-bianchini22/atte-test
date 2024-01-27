@@ -18,7 +18,7 @@ class Time extends Model
 
         public function rest()
     {
-        return $this->hasMany(Rest::class);
+        return $this->hasOne(Rest::class);
     }
 
     public function scopeCreatedSearch($query, $created_at)

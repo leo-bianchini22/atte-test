@@ -229,12 +229,12 @@ class AttendanceController extends Controller
             $breakIn = new Carbon($rest->breakIn);
             $breakOut = new Carbon($rest->breakOut);
 
-            $breakingTime = Carbon::parse('00:00:00');
+            $TotalSeconds = $breakIn->diffInSeconds($breakOut);
 
-            $breakingTimeHours = $breakIn->diffInHours($breakOut);
-            $breakingTimeMinutes = $breakIn->diffInMinutes($breakOut);
-            $breakingTimeSeconds = $breakIn->diffInSeconds($breakOut);
-            $totalBreakingTime = $breakingTime->add($breakingTimeHours, $breakingTimeMinutes, $breakingTimeSeconds);
+            $breakingTimeHours = floor($TotalSeconds / 3600);
+            $breakingTimeMinutes = floor($TotalSeconds / 60 - $breakingTimeHours * 60);
+            $breakingTimeSeconds = floor($TotalSeconds % 60);
+            $totalBreakingTime = sprintf('%02d:%02d:%02d', $breakingTimeHours, $breakingTimeMinutes, $breakingTimeSeconds);
         }
 
         $timeOut->update([
