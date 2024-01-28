@@ -27,8 +27,14 @@
                 <td>{{ $time->user->name }}</td>
                 <td>{{ date('H:i:s', strtotime($time->punchIn)) }}</td>
                 <td>{{ date('H:i:s', strtotime($time->punchOut)) }}</td>
-                <td>{{ date('H:i:s', strtotime($time->rest->breakTime)) }}</td>
-                <td>{{ $time->workTime }}</td>
+                <td>
+                    @if($time->rest()->exists())
+                    {{ date('H:i:s', strtotime($time->rest->last()->breakTime)) }}
+                    @else
+                    No BreakTime Recorded
+                    @endif
+                </td>
+                <td>{{ date('H:i:s', strtotime($time->workTime)) }}</td>
             </tr>
             @endforeach
         </table>

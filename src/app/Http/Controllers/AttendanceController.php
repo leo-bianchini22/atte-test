@@ -39,38 +39,28 @@ class AttendanceController extends Controller
     }
 
     //出勤アクション
-    public function timein(Request $request)
+    public function timein()
     {
-        // **必要なルール**
-        // ・同じ日に2回出勤が押せない(もし打刻されていたらhomeに戻る設定)
+        //ログインユーザーの最新のレコードを取得
         $user = Auth::user();
-        $oldtimein = Time::where('user_id', $user->id)->latest()->first(); //一番最新のレコードを取得
+        $oldtime = Time::where('user_id', $user->id)->latest()->first();
 
-        //退勤前に出勤を2度押せない制御
-        // if ($oldtimein) {
-        //     $oldTimePunchIn = new Carbon($oldtimein->punchIn);
-        //     $oldDay = $oldTimePunchIn->startOfDay(); //最後に登録したpunchInの時刻を00:00:00で代入
-        // }
-        $today = Carbon::today(); //当日の日時を00:00:00で代入
-
-        // if (($oldDay == $today) && (empty($oldtimein->punchOut))) {
-        //     return redirect()->back()->with('message', '出勤打刻済みです');
-        // }
-
-        // 退勤後に再度出勤を押せない制御
-        if ($oldtimein) {
-            $oldTimePunchOut = new Carbon($oldtimein->punchOut);
+        // 出勤は１日に１度(2回目の出勤ボタン押せない)
+        if ($oldtime) {
+            $oldTimePunchOut = new Carbon($oldtime->punchOut);
             $oldDay = $oldTimePunchOut->startOfDay(); //最後に登録したpunchInの時刻を00:00:00で代入
         }
+
+        $today = Carbon::today();
 
         // if (($oldDay == $today)) {
         //     return redirect()->back()->with('message', '退勤打刻済みです');
         // }
 
+        // 勤務開始データ作成
         $month = intval($today->month);
         $day = intval($today->day);
         $year = intval($today->year);
-
 
         $time = Time::create([
             'user_id' => $user->id,
@@ -80,101 +70,19 @@ class AttendanceController extends Controller
             'year' => $year,
         ]);
 
-        // 出勤後に勤務開始ボタンが押せなくなる制御
-        $work_clicked = $request->input('work_clicked');
-        if ($work_clicked == 'work_start') {
-            $work_clicked = true;
-        } elseif ($work_clicked == 'work_end') {
-            $work_clicked = false;
-        }
-        // dump($work_clicked);
-
-        return redirect()->route('index')->with('key', $work_clicked);
-    }
-
-    //退勤アクション
-    public function timeOut(Request $request)
-    {
-        //ログインユーザーの最新のレコードを取得
-        $user = Auth::user();
-        $timeOut = Time::where('user_id', $user->id)->latest()->first();
-
-        //string → datetime型
-        $now = new Carbon();
-        $punchIn = new Carbon($timeOut->punchIn);
-        $breakIn = new Carbon($timeOut->breakIn);
-        $breakOut = new Carbon($timeOut->breakOut);
-        //実労時間(Minute)
-        $stayTime = $punchIn->diffInMinutes($now);
-        $breakTime = $breakIn->diffInMinutes($breakOut);
-        $workingMinute = $stayTime - $breakTime;
-        //5分刻み
-        $workingHour = ceil($workingMinute / 5) * 5;
-
-        //退勤処理がされていない場合のみ退勤処理を実行
-        if ($timeOut) {
-            if (empty($timeOut->punchOut)) {
-                if ($timeOut->breakIn && !$timeOut->breakOut) {
-                    return redirect()->back();
-                    // ->with('message', '休憩終了が打刻されていません');
-                } else {
-                    $timeOut->update([
-                        'punchOut' => Carbon::now(),
-                        'workTime' => $workingHour
-                    ]);
-                    return redirect()->back();
-                    // ->with('message', 'お疲れ様でした');
-                }
-            } else {
-                $today = new Carbon();
-                $day = $today->day;
-                $oldPunchOut = new Carbon();
-                $oldPunchOutDay = $oldPunchOut->day;
-                if ($day == $oldPunchOutDay) {
-                    return redirect()->back();
-                    // ->with('message', '退勤済みです');
-                } else {
-                    return redirect()->back();
-                    // ->with('message', '出勤打刻をしてください');
-                }
-            }
-        } else {
-            return redirect()->back();
-            // ->with('message', '出勤打刻がされていません');
-        }
-
-        $work_clicked = $request->input('work_clicked');
-        if ($work_clicked == 'work_start') {
-            $work_clicked = true;
-        } elseif ($work_clicked == 'work_end') {
-            $work_clicked = false;
-        }
-        return redirect()->route('index')->with('key', $work_clicked);
+        return redirect()->back();
     }
 
     //休憩開始アクション
-    public function breakIn(Request $request)
+    public function breakIn()
     {
+        //ログインユーザーの最新のレコードを取得
         $user = Auth::user();
-        $timeOut = Rest::where('time_id', $user->time_id)->latest()->first();
-        $oldtimein = Time::where('user_id', $user->id)->latest()->first();
-        // $user = Auth::user();
-        // $oldtimein = Time::where('user_id', $user->id)->latest()->first();
+        $oldtime = Time::where('user_id', $user->id)->latest()->first();
+        $oldrest = Rest::where('time_id', $oldtime->id)->latest()->first();
 
-        // $punchIn = new Carbon($timeOut->punchIn);
-        // $breakIn = new Carbon($timeOut->breakIn);
-        // $breakOut = new Carbon($timeOut->breakOut);
-
-        // if ($timeOut->punchIn && !$timeOut->punchOut && !$oldtimein->breakIn) {
-        //     $oldtimein->update([
-        //         'time_id' => $user->time_id,
-        //         'breakIn' => Carbon::now(),
-        //     ]);
-        //     return redirect()->back();
-        // }
-
+        // 休憩開始データ作成
         $today = Carbon::today();
-
         $month = intval($today->month);
         $day = intval($today->day);
         $year = intval($today->year);
@@ -187,36 +95,25 @@ class AttendanceController extends Controller
             'year' => $year,
         ]);
 
-        $work_clicked = true;
-        return redirect()->route('index')->with('key', $work_clicked);
+        return redirect()->back();
     }
 
     //休憩終了アクション
-    public function breakOut(Request $request)
+    public function breakOut()
     {
+        //ログインユーザーの最新のレコードを取得
         $user = Auth::user();
-        $timeOut = Rest::where('time_id', $user->id)->latest()->first();
-        $oldtimein = Time::where('user_id', $user->id)->latest()->first();
+        $oldtime = Time::where('user_id', $user->id)->latest()->first();
+        $oldrest = Rest::where('time_id', $user->id)->latest()->first();
 
-        // //string → datetime型
-        // $now = new Carbon();
-        // // $punchIn = new Carbon($oldtimein->punchIn);
-        // // $punchOut = new Carbon($oldtimein->punchOut);
-        // $breakIn = new Carbon($timeOut->breakIn);
-        // //休憩時間(Minute)
-        // // $stayTime = $punchIn->diffInMinutes($punchOut);
-        // $breakTime = $breakIn->diffInMinutes($now);
-        // $breakingMinute = $breakTime;
-        // //5分刻み
-        // $breakingTime = ceil($breakingMinute / 5) * 5;
-
-        if ($timeOut->breakIn && !$timeOut->breakOut) {
-            $timeOut->update([
+        // 休憩終了データ作成
+        if ($oldrest->breakIn && !$oldrest->breakOut) {
+            $oldrest->update([
                 'breakOut' => Carbon::now(),
             ]);
         }
 
-        // 休憩時間トータル
+        // 休憩時間データ作成
         $today = Carbon::today();
         $month = intval($today->month);
         $day = intval($today->day);
@@ -240,24 +137,67 @@ class AttendanceController extends Controller
         $breakingTimeSeconds = floor($totalBreakingTimeInSeconds % 60);
         $totalBreakingTime = sprintf('%02d:%02d:%02d', $breakingTimeHours, $breakingTimeMinutes, $breakingTimeSeconds);
 
-        $timeOut->update([
+        $oldrest->update([
             'breakTime' => Carbon::create($totalBreakingTime)
         ]);
 
-        $work_clicked = true;
-        return redirect()->route('index')->with('key', $work_clicked);
+
+        return redirect()->back();
     }
 
-    // //勤怠実績
-    // public function performance()
-    // {
-    //     $items = [];
-    //     return view('time.performance', ['items' => $items]);
-    // }
-    // public function result(Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $items = Time::where('user_id', $user->id)->where('year', $request->year)->where('month', $request->month)->get();
-    //     return view('time.performance', ['items' => $items]);
-    // }
+    //退勤アクション
+    public function timeOut(Request $request)
+    {
+        // ログインユーザーの最新のレコードを取得
+        $user = Auth::user();
+        $oldtime = Time::where('user_id', $user->id)->latest()->first();
+        $oldrest = Rest::where('time_id', $oldtime->id)->latest()->first();
+
+        //退勤処理がされていない場合のみ退勤処理を実行
+        if ($oldtime) {
+            if (empty($oldtime->punchOut)) {
+                if ($oldtime->breakIn && !$oldtime->breakOut) {
+                    return redirect()->back()->with('message', '休憩終了を打刻してください');
+                } else {
+                    $oldtime->update([
+                        'punchOut' => Carbon::now(),
+                    ]);
+                }
+            }
+        }
+
+        // 勤務時間を計算
+        $punchIn = new Carbon($oldtime->punchIn);
+        $punchOut = new Carbon($oldtime->punchOut);
+        $totalStayTimeInSeconds = $punchOut->diffInSeconds($punchIn);
+
+        // 休憩時間を取得して差し引く
+        $today = Carbon::today();
+        $month = intval($today->month);
+        $day = intval($today->day);
+        $rests = Rest::where('time_id', $user->id)
+            ->GetMonthAttendance($month)
+            ->GetDayAttendance($day)
+            ->get();
+        $totalBreakingTimeInSeconds = 0; // トータル休憩時間の秒数リセット
+        foreach ($rests as $rest) {
+            $breakIn = new Carbon($rest->breakIn);
+            $breakOut = new Carbon($rest->breakOut);
+            $totalBreakingTimeInSeconds += $breakIn->diffInSeconds($breakOut); // 休憩時間を取得
+        }
+        $totalStayTimeInSeconds -= $totalBreakingTimeInSeconds; // 休憩時間を勤務時間から引く
+
+        // 勤務時間をフォーマット
+        $workingTimeHours = floor($totalStayTimeInSeconds / 3600);
+        $workingTimeMinutes = floor(($totalStayTimeInSeconds % 3600) / 60);
+        $workingTimeSeconds = $totalStayTimeInSeconds % 60;
+        $totalworkingTime = sprintf('%02d:%02d:%02d', $workingTimeHours, $workingTimeMinutes, $workingTimeSeconds);
+
+
+        $oldtime->update([
+            'workTime' => $totalworkingTime
+        ]);
+
+        return redirect()->back();
+    }
 }

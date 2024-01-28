@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Time extends Model
 {
@@ -18,7 +20,7 @@ class Time extends Model
 
         public function rest()
     {
-        return $this->hasOne(Rest::class);
+        return $this->hasMany(Rest::class);
     }
 
     public function scopeCreatedSearch($query, $created_at)

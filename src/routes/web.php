@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [AuthController::class, 'index'])->name('index');
+    Route::get('/', [AuthController::class, 'index']);
 });
 Route::middleware('auth')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'attendance']);
