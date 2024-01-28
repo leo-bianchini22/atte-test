@@ -13,6 +13,8 @@ class Time extends Model
 
     protected $fillable = ['user_id', 'punchIn', 'punchOut', 'month', 'day', 'workTime'];
 
+    protected $dates = ['punchIn', 'punchOut']; // Carbonインスタンスに変換するフィールドを指定する
+
     public function user()
     {
         return $this->belongsTo(User::class);

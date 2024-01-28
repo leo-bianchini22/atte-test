@@ -9,6 +9,11 @@
     <div class="atte__inner">
         <div class="atte__hello">
             <p>{{ Auth::user()->name }}さんお疲れ様です！</p>
+            @if(session('message'))
+            <div class="alert">
+                {{ session('message') }}
+            </div>
+            @endif
         </div>
         <div class="atte__button">
             <div class="atte__button-row">
@@ -51,10 +56,6 @@
                     @endif
                 </form>
             </div>
-        </div>
-        <div class="error">
-            @error('button')
-            {{ $message }} @enderror
         </div>
     </div>
 </div>

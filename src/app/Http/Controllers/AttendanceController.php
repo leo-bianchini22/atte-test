@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\AttendanceRequestRequest;
 use PhpParser\Node\Stmt\Break_;
 
 class AttendanceController extends Controller
@@ -43,19 +44,12 @@ class AttendanceController extends Controller
     {
         //ログインユーザーの最新のレコードを取得
         $user = Auth::user();
-        $oldtime = Time::where('user_id', $user->id)->latest()->first();
-
-        // 出勤は１日に１度(2回目の出勤ボタン押せない)
-        if ($oldtime) {
-            $oldTimePunchOut = new Carbon($oldtime->punchOut);
-            $oldDay = $oldTimePunchOut->startOfDay(); //最後に登録したpunchInの時刻を00:00:00で代入
-        }
-
+        $latestTimeIn = Time::where('user_id', $user->id)->latest('punchIn')->first();
         $today = Carbon::today();
 
-        // if (($oldDay == $today)) {
-        //     return redirect()->back()->with('message', '退勤打刻済みです');
-        // }
+        if ($latestTimeIn && $latestTimeIn->punchIn->format('Y-m-d') === $today->format('Y-m-d')) {
+            return redirect()->back()->with('message', '今日は退勤打刻済みです');
+        }
 
         // 勤務開始データ作成
         $month = intval($today->month);
@@ -166,7 +160,7 @@ class AttendanceController extends Controller
             }
         }
 
-        // 勤務時間を計算
+        // 勤務時間データ作成
         $punchIn = new Carbon($oldtime->punchIn);
         $punchOut = new Carbon($oldtime->punchOut);
         $totalStayTimeInSeconds = $punchOut->diffInSeconds($punchIn);
@@ -179,24 +173,24 @@ class AttendanceController extends Controller
             ->GetMonthAttendance($month)
             ->GetDayAttendance($day)
             ->get();
-        $totalBreakingTimeInSeconds = 0; // トータル休憩時間の秒数リセット
+        $totalBreakingTimeInSeconds = 0;
         foreach ($rests as $rest) {
             $breakIn = new Carbon($rest->breakIn);
             $breakOut = new Carbon($rest->breakOut);
-            $totalBreakingTimeInSeconds += $breakIn->diffInSeconds($breakOut); // 休憩時間を取得
+            $totalBreakingTimeInSeconds += $breakIn->diffInSeconds($breakOut);
         }
-        $totalStayTimeInSeconds -= $totalBreakingTimeInSeconds; // 休憩時間を勤務時間から引く
+        $totalStayTimeInSeconds -= $totalBreakingTimeInSeconds;
 
-        // 勤務時間をフォーマット
+        // 勤務時間フォーマット
         $workingTimeHours = floor($totalStayTimeInSeconds / 3600);
         $workingTimeMinutes = floor(($totalStayTimeInSeconds % 3600) / 60);
         $workingTimeSeconds = $totalStayTimeInSeconds % 60;
         $totalworkingTime = sprintf('%02d:%02d:%02d', $workingTimeHours, $workingTimeMinutes, $workingTimeSeconds);
 
-
         $oldtime->update([
             'workTime' => $totalworkingTime
         ]);
+
 
         return redirect()->back();
     }

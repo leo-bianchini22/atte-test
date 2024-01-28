@@ -34,3 +34,12 @@
     font-size: 18px;
     font-weight: bold;
 }
+
+.alert {
+    margin: 0 auto;
+    width: 50%;
+    height: 25px;
+    font-size: 20px;
+    text-align: center;
+    color: red;
+}
