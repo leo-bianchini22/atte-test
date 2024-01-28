@@ -220,35 +220,29 @@ class AttendanceController extends Controller
         $today = Carbon::today();
         $month = intval($today->month);
         $day = intval($today->day);
-        $rests = Rest::GetMonthAttendance($month)->GetDayAttendance($day)->get();
+        $rests = Rest::where('time_id', $user->id)
+            ->GetMonthAttendance($month)
+            ->GetDayAttendance($day)
+            ->get();
+
+        $totalBreakingTimeInSeconds = 0; // トータル休憩時間の秒数リセット
+
         foreach ($rests as $rest) {
-            // 取得
-            $breakInString = Rest::select('breakIn')->get();
-            $breakOutString = Rest::select('breakOut')->get();
-             //string → datetime型
+            //string → datetime型
             $breakIn = new Carbon($rest->breakIn);
             $breakOut = new Carbon($rest->breakOut);
 
-            $TotalSeconds = $breakIn->diffInSeconds($breakOut);
-
-            $breakingTimeHours = floor($TotalSeconds / 3600);
-            $breakingTimeMinutes = floor($TotalSeconds / 60 - $breakingTimeHours * 60);
-            $breakingTimeSeconds = floor($TotalSeconds % 60);
-            $totalBreakingTime = sprintf('%02d:%02d:%02d', $breakingTimeHours, $breakingTimeMinutes, $breakingTimeSeconds);
+            $totalBreakingTimeInSeconds += $breakIn->diffInSeconds($breakOut);
         }
+
+        $breakingTimeHours = floor($totalBreakingTimeInSeconds / 3600);
+        $breakingTimeMinutes = floor($totalBreakingTimeInSeconds / 60 - $breakingTimeHours * 60);
+        $breakingTimeSeconds = floor($totalBreakingTimeInSeconds % 60);
+        $totalBreakingTime = sprintf('%02d:%02d:%02d', $breakingTimeHours, $breakingTimeMinutes, $breakingTimeSeconds);
 
         $timeOut->update([
             'breakTime' => Carbon::create($totalBreakingTime)
         ]);
-
-        // $totalRestTime = Carbon::parse('00:00:00');
-
-        // foreach($timeOut as $timeOut) {
-        //     $now = new Carbon();
-        //     $breakIn = new Carbon($timeOut->breakIn);
-
-        //     $breakingTime = $now->diff($breakIn);
-        // }
 
         $work_clicked = true;
         return redirect()->route('index')->with('key', $work_clicked);
