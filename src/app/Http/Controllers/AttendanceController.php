@@ -13,22 +13,31 @@ use PhpParser\Node\Stmt\Break_;
 
 class AttendanceController extends Controller
 {
-    public function attendance(Request $request)
+    public function attendance($date)
     {
+        $user = Auth::user();
+
         // $today = Carbon::today();
         // $month = intval($today->month);
         // $day = intval($today->day);
-        //当日の勤怠を取得
+        // // 当日の勤怠を取得
         // $times = Time::GetMonthAttendance($month)->GetDayAttendance($day)->Paginate(5);
 
-        //日付のみ表示
+        // // 日付のみ表示
         // $today = date_format($today, 'Y-m-d');
 
-        $times = Time::Paginate(5);
-        $rests = Rest::all();
+        // $date = $request->input('date');
+        // $times = Time::getAttendanceByDate($date)->paginate(5);
+
+        // Carbonを使って日付を解析し、必要に応じてフォーマットする
+        $date = Carbon::parse($date)->toDateString();
+
+        // $dateに対応する勤怠情報を取得
+        $times = Time::whereDate('created_at', $date)->paginate(5);
+        $rests = Rest::whereDate('created_at', $date)->get();
         $users = User::all();
 
-        return view('attendance', compact('times', 'users', 'rests'));
+        return view('attendance', compact('times', 'users', 'rests', 'date'));
     }
 
     public function search(Request $request)
@@ -147,18 +156,9 @@ class AttendanceController extends Controller
         $oldtime = Time::where('user_id', $user->id)->latest()->first();
         $oldrest = Rest::where('time_id', $oldtime->id)->latest()->first();
 
-        //退勤処理がされていない場合のみ退勤処理を実行
-        if ($oldtime) {
-            if (empty($oldtime->punchOut)) {
-                if ($oldtime->breakIn && !$oldtime->breakOut) {
-                    return redirect()->back()->with('message', '休憩終了を打刻してください');
-                } else {
-                    $oldtime->update([
-                        'punchOut' => Carbon::now(),
-                    ]);
-                }
-            }
-        }
+        $oldtime->update([
+            'punchOut' => Carbon::now(),
+        ]);
 
         // 勤務時間データ作成
         $punchIn = new Carbon($oldtime->punchIn);

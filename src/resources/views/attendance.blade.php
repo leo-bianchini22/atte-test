@@ -6,13 +6,9 @@
 
 @section('content')
 <div class="atte__content">
-    <form class="search__form" action="/attendance/search" method="get">
-        @csrf
-        <!-- <button class="search__button-left">&lt;</button>
-        <div class="search-form__date"></div>
-        <button class="search__button-right">&gt;</button> -->
-        <input type="date" class="search-form__date" name="created_at"><button class="search__button-right">&gt;</button>
-    </form>
+    <div>
+        <h2>{{ $date }}</h2>
+    </div>
     <div class="atte-table">
         <table class="atte-table__inner">
             <tr class="atte-table__row__ttl">

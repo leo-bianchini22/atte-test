@@ -43,4 +43,9 @@ class Time extends Model
     {
         return $query->where('day', $day);
     }
+
+    public function scopeGetAttendanceByDate($query, $date)
+    {
+        return $query->whereDate('created_at', $date);
+    }
 }

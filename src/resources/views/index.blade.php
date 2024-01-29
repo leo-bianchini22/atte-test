@@ -19,17 +19,19 @@
             <div class="atte__button-row">
                 <form action="/time/timein" method="post">
                     @csrf
-                    @if($work_clicked)
+                    @if($work_clicked == true)
                     <button name="work_clicked" class="atte-start__button" value="work_start">勤務開始</button>
-                    @else
+                    @elseif($work_clicked == false)
                     <button name="work_clicked" class="atte-start__button" value="work_start" disabled>勤務開始</button>
                     @endif
                 </form>
                 <form action="/time/timeout" method="post">
                     @csrf
-                    @if(!$work_clicked)
+                    @if($work_clicked == false && $rest_clicked)
                     <button name="work_clicked" class="atte-stop__button" value="work_end">勤務終了</button>
-                    @else
+                    @elseif($work_clicked == true)
+                    <button name="work_clicked" class="atte-stop__button" value="work_end" disabled>勤務終了</button>
+                    @elseif($work_clicked == false && !$rest_clicked)
                     <button name="work_clicked" class="atte-stop__button" value="work_end" disabled>勤務終了</button>
                     @endif
                 </form>
