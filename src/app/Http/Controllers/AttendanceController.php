@@ -35,17 +35,8 @@ class AttendanceController extends Controller
         // $dateに対応する勤怠情報を取得
         $times = Time::whereDate('created_at', $date)->paginate(5);
         $rests = Rest::whereDate('created_at', $date)->get();
-        $users = User::all();
 
-        return view('attendance', compact('times', 'users', 'rests', 'date'));
-    }
-
-    public function search(Request $request)
-    {
-        $times = Time::with('user')->CreatedSearch($request->created_at)->Paginate(5);
-        $users = User::all();
-
-        return view('attendance', compact('times', 'users',));
+        return view('attendance', compact('times', 'user', 'rests', 'date'));
     }
 
     //出勤アクション

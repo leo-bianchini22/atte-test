@@ -25,27 +25,27 @@ class Time extends Model
         return $this->hasMany(Rest::class);
     }
 
-    public function scopeCreatedSearch($query, $created_at)
-    {
-        if (!empty($created_at)) {
-            $query->where('created_at', 'like', '%' . $created_at . '%');
-        }
-    }
+    // public function scopeCreatedSearch($query, $created_at)
+    // {
+    //     if (!empty($created_at)) {
+    //         $query->where('created_at', 'like', '%' . $created_at . '%');
+    //     }
+    // }
 
-    //任意の月の勤怠をスコープ
-    public function scopeGetMonthAttendance($query, $month)
-    {
-        return $query->where('month', $month);
-    }
+    // //任意の月の勤怠をスコープ
+    // public function scopeGetMonthAttendance($query, $month)
+    // {
+    //     return $query->where('month', $month);
+    // }
 
-    //任意の月の勤怠をスコープ
-    public function scopeGetDayAttendance($query, $day)
-    {
-        return $query->where('day', $day);
-    }
+    // //任意の月の勤怠をスコープ
+    // public function scopeGetDayAttendance($query, $day)
+    // {
+    //     return $query->where('day', $day);
+    // }
 
-    public function scopeGetAttendanceByDate($query, $date)
-    {
-        return $query->whereDate('created_at', $date);
-    }
+    // public function scopeGetAttendanceByDate($query, $date)
+    // {
+    //     return $query->whereDate('created_at', $date);
+    // }
 }
