@@ -21,9 +21,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [AuthController::class, 'index']);
 });
 Route::middleware('auth')->group(function () {
-    Route::get('/attendance/{date}', [AttendanceController::class, 'attendance']);
+    Route::get('/attendance', [AttendanceController::class, 'attendance']);
 });
-Route::get('/attendance/search', [AttendanceController::class, 'search']);
+Route::middleware('auth')->group(function () {
+    Route::get('/attendance/{date}', [AttendanceController::class, 'attendanceByDate']);
+});
 
 //出退勤打刻
 Route::post('/time/timein', [AttendanceController::class, 'timein']);

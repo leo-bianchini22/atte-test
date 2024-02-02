@@ -4,31 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\Rest;
 use App\Models\Time;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\AttendanceRequestRequest;
 use PhpParser\Node\Stmt\Break_;
 
 class AttendanceController extends Controller
 {
-    public function attendance($date)
+    public function attendance()
     {
         $user = Auth::user();
 
-        // $today = Carbon::today();
-        // $month = intval($today->month);
-        // $day = intval($today->day);
-        // // 当日の勤怠を取得
-        // $times = Time::GetMonthAttendance($month)->GetDayAttendance($day)->Paginate(5);
+        // 現在の日付を取得
+        $today = Carbon::today();
 
-        // // 日付のみ表示
-        // $today = date_format($today, 'Y-m-d');
+        // 日付のみ表示
+        $date = $today->toDateString();
 
-        // $date = $request->input('date');
-        // $times = Time::getAttendanceByDate($date)->paginate(5);
+        // 当日の勤怠を取得
+        $times = Time::GetMonthAttendance($today->month)->GetDayAttendance($today->day)->paginate(5);
+        $rests = Rest::whereDate('created_at', $date)->get();
 
+        return view('attendance', compact('times', 'user', 'rests', 'date'));
+    }
+
+    public function attendanceByDate($date)
+    {
+        $user = Auth::user();
         // Carbonを使って日付を解析し、必要に応じてフォーマットする
         $date = Carbon::parse($date)->toDateString();
 

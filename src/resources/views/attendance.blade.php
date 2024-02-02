@@ -24,7 +24,7 @@
                 <td>{{ date('H:i:s', strtotime($time->punchIn)) }}</td>
                 <td>{{ date('H:i:s', strtotime($time->punchOut)) }}</td>
                 <td>
-                    @if($time->rest()->exists())
+                    @if($time->rest->isNotEmpty())
                     {{ date('H:i:s', strtotime($time->rest->last()->breakTime)) }}
                     @else
                     No BreakTime Recorded
