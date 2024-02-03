@@ -16,7 +16,7 @@ class AuthController extends Controller
     {
         $users = Auth::user();
         $times = Time::all();
-        $rests = Rest::latest()->first();
+        $rests = Rest::all();
 
         // ボタンの表示制御
         $work_clicked = true;
@@ -24,7 +24,10 @@ class AuthController extends Controller
         // ログインユーザーの最新のレコードを取得
         $user = Auth::user();
         $oldtime = Time::where('user_id', $user->id)->latest()->first();
-        $oldrest = Rest::where('time_id', $user->id)->latest()->first();
+        $oldrest = null;
+        if ($oldtime) {
+            $oldrest = Rest::where('time_id', $oldtime->id)->latest()->first();
+        }
         $today = Carbon::today();
         // 条件付き表示
         if ((empty($oldtime->punchIn)) && (empty($oldtime->punchOut)) && (empty($oldrest->breakIn)) && (empty($oldrest->breakOut))) {

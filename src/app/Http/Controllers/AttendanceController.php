@@ -14,6 +14,7 @@ class AttendanceController extends Controller
     public function attendance()
     {
         $user = Auth::user();
+        $oldtime = Time::where('user_id', $user->id)->latest()->first();
 
         // 現在の日付を取得
         $today = Carbon::today();
@@ -84,7 +85,7 @@ class AttendanceController extends Controller
         $year = intval($today->year);
 
         $rest = Rest::create([
-            'time_id' => $user->id,
+            'time_id' => $oldtime->id,
             'breakIn' => Carbon::now(),
             'month' => $month,
             'day' => $day,
@@ -100,7 +101,7 @@ class AttendanceController extends Controller
         //ログインユーザーの最新のレコードを取得
         $user = Auth::user();
         $oldtime = Time::where('user_id', $user->id)->latest()->first();
-        $oldrest = Rest::where('time_id', $user->id)->latest()->first();
+        $oldrest = Rest::where('time_id', $oldtime->id)->latest()->first();
 
         // 休憩終了データ作成
         if ($oldrest->breakIn && !$oldrest->breakOut) {
@@ -113,7 +114,7 @@ class AttendanceController extends Controller
         $today = Carbon::today();
         $month = intval($today->month);
         $day = intval($today->day);
-        $rests = Rest::where('time_id', $user->id)
+        $rests = Rest::where('time_id', $oldtime->id)
             ->GetMonthAttendance($month)
             ->GetDayAttendance($day)
             ->get();
@@ -162,7 +163,7 @@ class AttendanceController extends Controller
         $today = Carbon::today();
         $month = intval($today->month);
         $day = intval($today->day);
-        $rests = Rest::where('time_id', $user->id)
+        $rests = Rest::where('time_id', $oldtime->id)
             ->GetMonthAttendance($month)
             ->GetDayAttendance($day)
             ->get();
