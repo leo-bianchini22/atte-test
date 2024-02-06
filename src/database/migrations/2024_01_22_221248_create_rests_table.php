@@ -21,6 +21,7 @@ class CreateRestsTable extends Migration
             $table->dateTime('breakTime')->nullable();
             $table->integer('month');
             $table->integer('day');
+            $table->integer('year');
             $table->timestamps();
         });
     }

@@ -12,6 +12,7 @@ use App\Http\Requests\AttendanceRequestRequest;
 
 class AuthController extends Controller
 {
+    // 打刻画面
     public function index(Request $request)
     {
         $users = Auth::user();

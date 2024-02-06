@@ -21,6 +21,7 @@ class CreateTimesTable extends Migration
             $table->time('workTime')->nullable();
             $table->integer('month');
             $table->integer('day');
+            $table->integer('year');
             $table->timestamps();
         });
     }

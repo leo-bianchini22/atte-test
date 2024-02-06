@@ -24,6 +24,7 @@
                     @if (Auth::check())
                     <li><a href="/">ホーム</a></li>
                     <li><a href="/attendance">日付一覧</a></li>
+                    <li><a href="/list">ユーザー一覧</a></li>
                     <form class="logout__form" action="/logout" method="post">
                         @csrf
                         <button>ログアウト</button>

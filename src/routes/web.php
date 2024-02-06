@@ -19,12 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [AuthController::class, 'index']);
-});
-Route::middleware('auth')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'attendance']);
-});
-Route::middleware('auth')->group(function () {
     Route::get('/attendance/{date}', [AttendanceController::class, 'attendanceByDate']);
+    Route::get('/list', [AttendanceController::class, 'attendanceList']);
+    Route::get('/list/{id}', [AttendanceController::class, 'attendanceListById'])->name('ListId');
 });
 
 //出退勤打刻

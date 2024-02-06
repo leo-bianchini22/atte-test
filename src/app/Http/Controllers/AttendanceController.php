@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rest;
 use App\Models\Time;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use PhpParser\Node\Stmt\Break_;
 
 class AttendanceController extends Controller
 {
+    // 日付一覧画面
     public function attendance()
     {
         $user = Auth::user();
@@ -18,8 +20,6 @@ class AttendanceController extends Controller
 
         // 現在の日付を取得
         $today = Carbon::today();
-
-        // 日付のみ表示
         $date = $today->toDateString();
 
         // 当日の勤怠を取得
@@ -29,6 +29,7 @@ class AttendanceController extends Controller
         return view('attendance', compact('times', 'user', 'rests', 'date'));
     }
 
+    // 日付別一覧画面
     public function attendanceByDate($date)
     {
         $user = Auth::user();
@@ -40,6 +41,23 @@ class AttendanceController extends Controller
         $rests = Rest::whereDate('created_at', $date)->get();
 
         return view('attendance', compact('times', 'user', 'rests', 'date'));
+    }
+
+    // ユーザー一覧画面
+    public function attendanceList()
+    {
+        $user = Auth::user();
+        $lists = User::paginate(5);
+
+        return view('list', compact('lists'));
+    }
+
+    public function attendanceListById($id)
+    {
+        $user = Auth::user();
+        $times = Time::where('user_id', $id)->paginate(5);
+
+        return view('listById', compact('times', 'user'));
     }
 
     //出勤アクション

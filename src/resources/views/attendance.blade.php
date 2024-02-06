@@ -27,7 +27,7 @@
                     @if($time->rest->isNotEmpty())
                     {{ date('H:i:s', strtotime($time->rest->last()->breakTime)) }}
                     @else
-                    No BreakTime Recorded
+                    休憩なし
                     @endif
                 </td>
                 <td>{{ date('H:i:s', strtotime($time->workTime)) }}</td>

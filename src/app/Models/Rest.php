@@ -10,7 +10,7 @@ class Rest extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['time_id', 'breakIn', 'breakOut', 'month', 'day', 'breakTime'];
+    protected $fillable = ['time_id', 'breakIn', 'breakOut', 'month', 'day', 'year', 'breakTime'];
 
     public function time()
     {
