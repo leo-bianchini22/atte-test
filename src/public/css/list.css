@@ -5,6 +5,12 @@
     text-align: center;
 }
 
+.list__ttl {
+    padding: 30px 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
 .list-table__inner {
     width: 100%;
 }
@@ -35,31 +41,49 @@
     padding: 5px 10px;
     color: black;
     border: 1px solid black;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    display: inline-block;
 }
 
-svg.w-5.h-5 {
-    width: 30px;
-    height: 30px;
+.list-table__row td a:hover {
+    background-color: dodgerblue;
+    color: white;
+    border-color: dodgerblue;
 }
 
 .paginate {
-    padding: 5px 10px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .paginate ul {
-    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+    display: inline-block;
 }
 
 .paginate li {
-    display: inline;
-    color: dodgerblue;
-    padding: 10px;
-    background-color: #fff;
+    display: inline-block;
+    margin: 0 5px;
 }
 
-.paginate a {
+.paginate a,
+.paginate span {
+    padding: 8px 12px;
     color: dodgerblue;
     text-decoration: none;
-    padding: 10px;
     background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.paginate a:hover,
+.paginate span:hover {
+    background-color: dodgerblue;
+    color: #fff;
+}
+
+.paginate .active a,
+.paginate .active span {
+    background-color: dodgerblue;
+    color: #fff;
 }

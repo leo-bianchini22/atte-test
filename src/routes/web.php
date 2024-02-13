@@ -20,10 +20,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
     Route::get('/', [AuthController::class, 'index']);
     Route::get('/attendance', [AttendanceController::class, 'attendance']);
-    Route::get('/attendance/{date}', [AttendanceController::class, 'attendanceByDate']);
     Route::get('/list', [AttendanceController::class, 'attendanceList']);
     Route::get('/list/{id}', [AttendanceController::class, 'attendanceListById'])->name('ListId');
 });
+
+//日付操作
+Route::post('/attendance/date', [AttendanceController::class, 'attendanceByDate']);
 
 //出退勤打刻
 Route::post('/time/timein', [AttendanceController::class, 'timein']);

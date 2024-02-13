@@ -5,6 +5,40 @@
     text-align: center;
 }
 
+.atte-form {
+    margin: 17px;
+}
+
+.form {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.form input {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px;
+    margin-left: 40px;
+    border: none;
+    background-color: #fafafa;
+}
+
+.form button {
+    font-size: 24px;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: 1px solid dodgerblue;
+    background-color: white;
+    color: dodgerblue;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.form button:hover {
+    background-color: dodgerblue;
+    color: white;
+}
+
 .atte-table__inner {
     width: 100%;
 }
@@ -28,30 +62,39 @@
     width: 20%;
 }
 
-svg.w-5.h-5 {
-    width: 30px;
-    height: 30px;
-}
-
 .paginate {
-    padding: 5px 10px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 .paginate ul {
-    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+    display: inline-block;
 }
 
 .paginate li {
-    display: inline;
-    color: dodgerblue;
-    padding: 10px;
-    background-color: #fff;
+    display: inline-block;
+    margin: 0 5px;
 }
 
-.paginate a {
+.paginate a,
+.paginate span {
+    padding: 8px 12px;
     color: dodgerblue;
     text-decoration: none;
-    padding: 10px;
     background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
 }
 
+.paginate a:hover,
+.paginate span:hover {
+    background-color: dodgerblue;
+    color: #fff;
+}
+
+.paginate .active a,
+.paginate .active span {
+    background-color: dodgerblue;
+    color: #fff;
+}

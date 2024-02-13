@@ -23,20 +23,30 @@ class AttendanceController extends Controller
         $date = $today->toDateString();
 
         // 当日の勤怠を取得
-        $times = Time::GetMonthAttendance($today->month)->GetDayAttendance($today->day)->paginate(5);
+        $times = Time::whereDate('created_at', $date)->paginate(5);
         $rests = Rest::whereDate('created_at', $date)->get();
 
         return view('attendance', compact('times', 'user', 'rests', 'date'));
     }
 
-    // 日付別一覧画面
-    public function attendanceByDate($date)
+    // 日付操作アクション
+    public function attendanceByDate(Request $request)
     {
         $user = Auth::user();
-        // Carbonを使って日付を解析し、必要に応じてフォーマットする
-        $date = Carbon::parse($date)->toDateString();
+        $oldtime = Time::where('user_id', $user->id)->latest()->first();
 
-        // $dateに対応する勤怠情報を取得
+        // 日付の取得
+        $date = new \DateTime($request->input('form__input-date'));
+        $date = $date->format('Y-m-d');
+
+        // ボタンの値に基づいて日付を更新
+        if ($request->input('changeDate') == 'next') {
+            $date = date('Y-m-d', strtotime($date . ' +1 day'));
+        } elseif ($request->input('changeDate') == 'return') {
+            $date = date('Y-m-d', strtotime($date . ' -1 day'));
+        }
+
+        // 日付に対応した勤怠を取得
         $times = Time::whereDate('created_at', $date)->paginate(5);
         $rests = Rest::whereDate('created_at', $date)->get();
 
