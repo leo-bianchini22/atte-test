@@ -15,5 +15,22 @@
 2. composer install
 3. cp .env.example .env
   ( .env.exampleファイルから.env作成、環境変数の変更を行う )
-5. php artisan key:generate
-6. php artisan migrate
+4. php artisan key:generate
+5. php artisan migrate
+
+## 機能一覧
+会員登録機能
+ログイン機能
+勤務開始、終了機能
+休憩開始、休憩終了機能
+日付別勤怠情報取得
+従業員別勤怠情報取得
+
+## 使用技術
+* PHP 8.3.0
+* Laravel 8.83.27
+* Laravel/fortify 1.19
+* mysql 8.2.0
+
+## ER図
+"C:\Users\れお\Pictures\Screenshots\スクリーンショット  Atte ER図.png"
