@@ -35,3 +35,9 @@
 ## ER図
 ![スクリーンショット  Atte ER図](https://github.com/leo-bianchini22/atte-test/assets/149698762/2e503e42-c370-4069-a5a5-24b92cbce9aa)
 
+## URL
+開発環境
+* http://localhost/
+
+phpMyAdmin
+* http://localhost:8080/
