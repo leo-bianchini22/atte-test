@@ -11,3 +11,9 @@
 3. docker-compose up -d --build
 
 #### Lalavel環境構築
+1. docker-compose exec php bash
+2. composer install
+3. cp .env.example .env
+  ( .env.exampleファイルから.env作成、環境変数の変更を行う )
+5. php artisan key:generate
+6. php artisan migrate
