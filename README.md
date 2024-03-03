@@ -33,4 +33,5 @@
 * mysql 8.2.0
 
 ## ER図
-"C:\Users\れお\Pictures\Screenshots\スクリーンショット  Atte ER図.png"
+![スクリーンショット  Atte ER図](https://github.com/leo-bianchini22/atte-test/assets/149698762/2e503e42-c370-4069-a5a5-24b92cbce9aa)
+
