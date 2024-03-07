@@ -42,8 +42,8 @@
                         @endif
                     </td>
                     <td>
-                        @if($time->punchOut !== null)
-                        {{ date('H:i:s', strtotime($time->punchOut)) }}
+                        @if($time->workTime !== null)
+                        {{ date('H:i:s', strtotime($time->workTime)) }}
                         @else
                         打刻してください
                         @endif
