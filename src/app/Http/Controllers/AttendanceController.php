@@ -13,14 +13,16 @@ use PhpParser\Node\Stmt\Break_;
 class AttendanceController extends Controller
 {
     // 日付一覧画面
-    public function attendance()
+    public function attendance($date = null)
     {
         $user = Auth::user();
         $oldtime = Time::where('user_id', $user->id)->latest()->first();
 
-        // 現在の日付を取得
-        $today = Carbon::today();
-        $date = $today->toDateString();
+        // 日付の取得
+        if ($date === null) {
+            $today = Carbon::today();
+            $date = $today->toDateString();
+        }
 
         // 当日の勤怠を取得
         $times = Time::whereDate('created_at', $date)->paginate(5);
@@ -32,9 +34,6 @@ class AttendanceController extends Controller
     // 日付操作アクション
     public function attendanceByDate(Request $request)
     {
-        $user = Auth::user();
-        $oldtime = Time::where('user_id', $user->id)->latest()->first();
-
         // 日付の取得
         $date = new \DateTime($request->input('form__input-date'));
         $date = $date->format('Y-m-d');
@@ -46,11 +45,7 @@ class AttendanceController extends Controller
             $date = date('Y-m-d', strtotime($date . ' -1 day'));
         }
 
-        // 日付に対応した勤怠を取得
-        $times = Time::whereDate('created_at', $date)->paginate(5);
-        $rests = Rest::whereDate('created_at', $date)->get();
-
-        return view('attendance', compact('times', 'user', 'rests', 'date'));
+        return redirect()->route('attendance', ['date' => $date]);
     }
 
     // ユーザー一覧画面

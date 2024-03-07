@@ -23,17 +23,31 @@
                 </tr>
                 @foreach($times as $time)
                 <tr class="list-table__row">
-                    <td>{{ $time->year }}/{{ $time->month }}/{{ $time->day }}</td>
+                    <td>{{ $time->user->name }}</td>
                     <td>{{ date('H:i:s', strtotime($time->punchIn)) }}</td>
-                    <td>{{ date('H:i:s', strtotime($time->punchOut)) }}</td>
                     <td>
-                        @if($time->rest->isNotEmpty())
+                        @if($time->punchOut !== null)
+                        {{ date('H:i:s', strtotime($time->punchOut)) }}
+                        @else
+                        打刻してください
+                        @endif
+                    </td>
+                    <td>
+                        @if($time->rest->isNotEmpty() && $time->rest->last()->breakTime !== null)
                         {{ date('H:i:s', strtotime($time->rest->last()->breakTime)) }}
+                        @elseif($time->rest->isNotEmpty() && $time->rest->last()->breakTime == null)
+                        打刻してください
                         @else
                         休憩なし
                         @endif
                     </td>
-                    <td>{{ date('H:i:s', strtotime($time->workTime)) }}</td>
+                    <td>
+                        @if($time->punchOut !== null)
+                        {{ date('H:i:s', strtotime($time->punchOut)) }}
+                        @else
+                        打刻してください
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </table>
